@@ -12,6 +12,7 @@ const isSameDay = (timestamp: string, target: Date) => {
     && date.getDate() === target.getDate()
 }
 
+
 export const useEnergyStore = defineStore('energy', () => {
   const user = { name: 'Lucas' }
   const transactions = ref<EnergyTransaction[]>([...mockTransactions])
