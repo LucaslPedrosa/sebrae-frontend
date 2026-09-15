@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #f4f5ef;
+  --color-ink: #17201d;
+  --color-muted: #69726e;
+  --color-line: #dfe2da;
+  --color-lime: #c1f149;
+  --color-green: #1f8a5b;
+  --color-green-soft: #e7f4eb;
+  --color-coral: #e4674f;
+  --color-coral-soft: #faebe7;
+  --color-sky: #a6dfea;
+  --font-sans: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--color-canvas); }
+  button, input { font: inherit; }
+  button { cursor: pointer; }
+  ::selection { background: #c1f149; color: #17201d; }
+}
+
+@layer components {
+  .panel { @apply rounded-2xl border border-line bg-white; }
+  .eyebrow { @apply text-[11px] font-bold uppercase tracking-[0.18em] text-muted; }
+  .nav-link.router-link-active { @apply bg-white/10 text-white; }
+  .nav-link.router-link-active svg { @apply text-lime; }
+  .mobile-nav-link.router-link-active { @apply bg-white/10 text-lime; }
+}
