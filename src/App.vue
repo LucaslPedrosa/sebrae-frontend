@@ -1,8 +1,28 @@
 <script setup lang="ts">
-import { LayoutDashboard, Store, ScrollText, Cpu, Zap, Bell } from '@lucide/vue'
+import { computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { LayoutDashboard, Store, ScrollText, Cpu, Zap, LogOut } from '@lucide/vue'
+import { useAuthStore } from '@/stores/auth'
 import { useEnergyStore } from '@/stores/energy'
 
+const auth = useAuthStore()
 const store = useEnergyStore()
+const route = useRoute()
+const router = useRouter()
+const publicLayout = computed(() => Boolean(route.meta.publicLayout))
+
+watch(() => auth.user?.id, (userId, previousUserId) => {
+  if (userId === previousUserId) return
+  store.reset()
+  if (userId) void store.loadAll(true)
+  else if (previousUserId) void router.replace('/login')
+})
+
+async function signOut() {
+  store.reset()
+  await auth.signOut()
+  await router.replace('/login')
+}
 
 const navigation = [
   { label: 'Visão geral', shortLabel: 'Início', to: '/dashboard', icon: LayoutDashboard },
@@ -13,7 +33,8 @@ const navigation = [
 </script>
 
 <template>
-  <div class="min-h-screen bg-canvas text-ink">
+  <RouterView v-if="publicLayout" />
+  <div v-else class="min-h-screen bg-canvas text-ink">
     <aside class="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-line bg-ink px-5 py-7 text-white lg:flex">
       <RouterLink to="/dashboard" class="flex items-center gap-3 px-2">
         <span class="grid size-10 place-items-center rounded-xl bg-lime text-ink shadow-[0_0_30px_rgba(193,241,73,.15)]">
@@ -38,9 +59,9 @@ const navigation = [
       <div class="mt-auto rounded-2xl border border-white/8 bg-white/5 p-4">
         <p class="text-xs text-white/45">Conta ativa</p>
         <div class="mt-3 flex items-center gap-3">
-          <div class="grid size-9 place-items-center rounded-full bg-sky text-sm font-bold text-ink">L</div>
+          <div class="grid size-9 place-items-center rounded-full bg-sky text-sm font-bold text-ink">{{ auth.user?.initials }}</div>
           <div>
-            <p class="text-sm font-semibold">{{ store.user.name }}</p>
+            <p class="text-sm font-semibold">{{ auth.user?.name }}</p>
             <p class="text-xs text-white/40">Conta residencial</p>
           </div>
         </div>
@@ -53,16 +74,16 @@ const navigation = [
           <span class="grid size-8 place-items-center rounded-lg bg-ink text-lime"><Zap :size="17" fill="currentColor" /></span>
           <span class="font-bold">lumina</span>
         </RouterLink>
-        <p class="hidden text-sm text-muted lg:block">Créditos de energia distribuída</p>
+        <p class="hidden text-sm text-muted lg:block">{{ auth.demoMode ? 'Demonstracao local - dados neste navegador' : 'Creditos de energia distribuida' }}</p>
         <div class="flex items-center gap-3">
-          <button class="grid size-9 place-items-center rounded-full border border-line bg-white text-muted transition hover:text-ink" aria-label="Notificações">
-            <Bell :size="17" />
-          </button>
           <div class="hidden text-right sm:block">
-            <p class="text-sm font-semibold leading-tight">{{ store.user.name }}</p>
-            <p class="text-[11px] text-muted">Conta verificada</p>
+            <p class="text-sm font-semibold leading-tight">{{ auth.user?.name }}</p>
+            <p class="text-[11px] text-muted">{{ auth.demoMode ? 'Modo local' : 'Conta conectada' }}</p>
           </div>
-          <div class="grid size-9 place-items-center rounded-full bg-ink text-sm font-bold text-white">L</div>
+          <div class="grid size-9 place-items-center rounded-full bg-ink text-sm font-bold text-white">{{ auth.user?.initials }}</div>
+          <button class="grid size-9 place-items-center rounded-full border border-line bg-white text-muted transition hover:text-coral" aria-label="Sair" @click="signOut">
+            <LogOut :size="16" />
+          </button>
         </div>
       </header>
 

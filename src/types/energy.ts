@@ -21,13 +21,17 @@ export interface EnergyDevice {
   status: 'online' | 'offline'
   energyTodayWh: number
   location: string
+  lastSeenAt?: string
 }
 
 export interface MarketOffer {
   id: string
+  sellerId: string
   seller: string
   amountWh: number
   pricePerKwh: number
+  status: 'open' | 'sold' | 'cancelled'
+  createdAt: string
 }
 
 export interface ChartPoint {
@@ -35,3 +39,18 @@ export interface ChartPoint {
   generationWh: number
   consumptionWh: number
 }
+
+export interface AppUser {
+  id: string
+  email: string
+  name: string
+  initials: string
+}
+
+export interface ActionResult<T = void> {
+  ok: boolean
+  data?: T
+  message?: string
+}
+
+export type ResourceStatus = 'idle' | 'loading' | 'success' | 'error'

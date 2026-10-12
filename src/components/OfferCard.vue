@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ArrowRight, Leaf } from '@lucide/vue'
+import { ArrowRight, X } from '@lucide/vue'
 import type { MarketOffer } from '@/types/energy'
 import { formatCurrency, formatEnergy, whToKwh } from '@/utils/formatters'
 
-defineProps<{ offer: MarketOffer; isOwn?: boolean }>()
-defineEmits<{ buy: [id: string] }>()
+defineProps<{ offer: MarketOffer; isOwn?: boolean; pending?: boolean }>()
+defineEmits<{ buy: [id: string]; cancel: [id: string] }>()
 </script>
 
 <template>
@@ -14,7 +14,7 @@ defineEmits<{ buy: [id: string] }>()
         <span class="grid size-10 place-items-center rounded-full bg-green-soft font-bold text-green">{{ offer.seller.charAt(0) }}</span>
         <div>
           <p class="text-sm font-semibold">{{ offer.seller }}</p>
-          <p class="flex items-center gap-1 text-[11px] text-muted"><Leaf :size="11" /> Origem renovável</p>
+          <p class="text-[11px] text-muted">Credito simulado</p>
         </div>
       </div>
       <span v-if="isOwn" class="rounded-full bg-lime/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide">Sua oferta</span>
@@ -25,12 +25,13 @@ defineEmits<{ buy: [id: string] }>()
         <p class="mt-1 text-xs text-muted">{{ formatCurrency(offer.pricePerKwh) }}/kWh</p>
       </div>
       <button
-        :disabled="isOwn"
+        :disabled="pending"
         class="flex items-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-green disabled:cursor-default disabled:bg-line disabled:text-muted"
-        @click="$emit('buy', offer.id)"
+        @click="isOwn ? $emit('cancel', offer.id) : $emit('buy', offer.id)"
       >
-        {{ isOwn ? 'Publicada' : 'Comprar' }}
-        <ArrowRight v-if="!isOwn" :size="14" />
+        {{ pending ? 'Processando...' : isOwn ? 'Cancelar' : 'Comprar' }}
+        <X v-if="isOwn && !pending" :size="14" />
+        <ArrowRight v-else-if="!pending" :size="14" />
       </button>
     </div>
     <p class="mt-5 border-t border-line pt-4 text-xs text-muted">Total estimado <strong class="float-right text-ink">{{ formatCurrency(whToKwh(offer.amountWh) * offer.pricePerKwh) }}</strong></p>

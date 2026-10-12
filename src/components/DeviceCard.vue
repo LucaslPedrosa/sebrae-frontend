@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Sun, PlugZap, MapPin, MoreHorizontal } from '@lucide/vue'
+import { Sun, PlugZap, MapPin, Gauge } from '@lucide/vue'
 import type { EnergyDevice } from '@/types/energy'
 import { formatEnergy } from '@/utils/formatters'
 
-defineProps<{ device: EnergyDevice }>()
+defineProps<{ device: EnergyDevice; pending?: boolean }>()
+defineEmits<{ reading: [device: EnergyDevice] }>()
 </script>
 
 <template>
@@ -13,7 +14,9 @@ defineProps<{ device: EnergyDevice }>()
         <Sun v-if="device.type === 'generator'" :size="22" />
         <PlugZap v-else :size="22" />
       </span>
-      <button class="text-muted hover:text-ink" aria-label="Mais opções"><MoreHorizontal :size="20" /></button>
+      <button :disabled="pending" class="flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-2 text-[11px] font-semibold text-muted hover:text-ink disabled:opacity-50" @click="$emit('reading', device)">
+        <Gauge :size="14" /> {{ pending ? 'Salvando...' : 'Simular leitura' }}
+      </button>
     </div>
     <div class="mt-6 flex items-center gap-2">
       <span class="size-2 rounded-full" :class="device.status === 'online' ? 'bg-green shadow-[0_0_0_4px_#e7f4eb]' : 'bg-muted/45'"></span>
