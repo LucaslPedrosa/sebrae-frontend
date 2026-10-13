@@ -62,15 +62,15 @@ onMounted(() => store.loadAll())
     <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
       <div>
         <p class="eyebrow">Ledger persistente</p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Histórico de energia</h1>
+        <h1 class="mt-2 text-4xl font-semibold tracking-[-0.055em] sm:text-5xl">Histórico de energia</h1>
         <p class="mt-2 text-sm text-muted">Cada watt-hora gerado, consumido ou transferido.</p>
       </div>
-      <button :disabled="transactions.length === 0" class="flex items-center gap-2 rounded-xl border border-line bg-white px-4 py-2.5 text-xs font-semibold transition hover:border-ink/30 disabled:opacity-50" @click="exportCsv">
+      <button :disabled="transactions.length === 0" class="flex items-center gap-2 rounded-xl border border-line bg-white/80 px-4 py-2.5 text-xs font-semibold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-ink/30 active:scale-95 disabled:opacity-50" @click="exportCsv">
         <Download :size="15" /> Exportar extrato
       </button>
     </div>
 
-    <div v-if="status === 'loading'" class="panel mt-8 p-8 text-center text-sm text-muted" role="status">Carregando historico...</div>
+    <div v-if="status === 'loading'" class="panel mt-8 space-y-3 p-5" role="status" aria-label="Carregando historico"><div v-for="item in 5" :key="item" class="skeleton h-16 rounded-xl"></div></div>
     <div v-else-if="status === 'error'" class="mt-8 rounded-2xl border border-coral/30 bg-coral/10 p-5 text-sm text-coral" role="alert">
       {{ error }} <button class="ml-2 font-bold underline" @click="store.loadAll(true)">Tentar novamente</button>
     </div>
@@ -80,7 +80,7 @@ onMounted(() => store.loadAll())
           <button
             v-for="filter in filters"
             :key="filter.value"
-            class="whitespace-nowrap rounded-lg px-3.5 py-2 text-xs font-semibold transition"
+            class="whitespace-nowrap rounded-lg px-3.5 py-2 text-xs font-semibold transition duration-300 active:scale-95"
             :class="selectedFilter === filter.value ? 'bg-ink text-white' : 'text-muted hover:text-ink'"
             :aria-pressed="selectedFilter === filter.value"
             @click="selectedFilter = filter.value"
@@ -97,7 +97,7 @@ onMounted(() => store.loadAll())
       <div class="px-5 sm:px-6">
         <TransactionList :transactions="filteredTransactions" show-date />
       </div>
-      <div class="border-t border-line bg-canvas/50 px-5 py-3 text-xs text-muted">{{ filteredTransactions.length }} lançamentos encontrados</div>
+      <div class="border-t border-line bg-canvas/50 px-5 py-3 text-xs text-muted" aria-live="polite">{{ filteredTransactions.length }} lançamentos encontrados</div>
     </section>
   </div>
 </template>

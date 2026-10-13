@@ -14,9 +14,9 @@ const labels = {
 </script>
 
 <template>
-  <div class="flex items-center gap-3 py-4 sm:gap-4">
+  <div class="group -mx-2 flex items-center gap-3 rounded-xl px-2 py-4 transition-colors duration-200 hover:bg-canvas/70 sm:gap-4">
     <span
-      class="grid size-10 shrink-0 place-items-center rounded-xl"
+      class="grid size-10 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105"
       :class="transaction.amountWh > 0 ? 'bg-green-soft text-green' : 'bg-coral-soft text-coral'"
     >
       <Sun v-if="transaction.type === 'generation'" :size="17" />
@@ -35,7 +35,7 @@ const labels = {
       <p class="text-sm font-bold" :class="transaction.amountWh > 0 ? 'text-green' : 'text-coral'">
         {{ transaction.amountWh > 0 ? '+' : '−' }}{{ formatEnergy(Math.abs(transaction.amountWh)) }}
       </p>
-      <p class="mt-0.5 text-xs text-muted">{{ formatTime(transaction.timestamp) }}</p>
+      <time class="mt-0.5 block text-xs text-muted" :datetime="transaction.timestamp">{{ formatTime(transaction.timestamp) }}</time>
     </div>
   </div>
 </template>

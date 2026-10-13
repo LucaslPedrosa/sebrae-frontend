@@ -1,10 +1,18 @@
 export const whToKwh = (wh: number) => wh / 1000
 
-export const formatEnergy = (wh: number, minimumFractionDigits = 2) =>
-  `${new Intl.NumberFormat('pt-BR', {
-    minimumFractionDigits,
-    maximumFractionDigits: 3,
-  }).format(whToKwh(wh))} kWh`
+const energyFormatters = new Map<number, Intl.NumberFormat>()
+
+export const formatEnergy = (wh: number, minimumFractionDigits = 2) => {
+  let formatter = energyFormatters.get(minimumFractionDigits)
+  if (!formatter) {
+    formatter = new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits,
+      maximumFractionDigits: 3,
+    })
+    energyFormatters.set(minimumFractionDigits, formatter)
+  }
+  return `${formatter.format(whToKwh(wh))} kWh`
+}
 
 export const formatCurrency = (value: number) =>
   new Intl.NumberFormat('pt-BR', {

@@ -7,15 +7,16 @@ withDefaults(defineProps<{ transactions: EnergyTransaction[]; showDate?: boolean
 
 <template>
   <div>
-    <template v-if="transactions.length">
+    <TransitionGroup v-if="transactions.length" name="fade-scale" tag="div" role="list">
       <TransactionItem
         v-for="transaction in transactions"
         :key="transaction.id"
         :transaction="transaction"
         :show-date="showDate"
+        role="listitem"
         class="border-b border-line last:border-0"
       />
-    </template>
-    <div v-else class="py-16 text-center text-sm text-muted">Nenhuma transação encontrada.</div>
+    </TransitionGroup>
+    <div v-else class="py-16 text-center text-sm text-muted"><span class="mx-auto mb-3 block size-2 rounded-full bg-line ring-8 ring-line/30"></span>Nenhuma transação encontrada.</div>
   </div>
 </template>

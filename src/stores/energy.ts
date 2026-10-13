@@ -74,6 +74,7 @@ export const useEnergyStore = defineStore('energy', () => {
   const status = ref<ResourceStatus>('idle')
   const error = ref('')
   const pendingAction = ref<string | null>(null)
+  const updatedAt = ref<Date | null>(null)
 
   const balanceWh = computed(() => transactions.value.reduce((sum, transaction) => sum + transaction.amountWh, 0))
   const reservedWh = computed(() => offers.value
@@ -117,6 +118,7 @@ export const useEnergyStore = defineStore('energy', () => {
       offers: offers.value,
       devices: devices.value,
     } satisfies DemoData))
+    updatedAt.value = new Date()
   }
 
   function loadDemoData() {
@@ -199,6 +201,7 @@ export const useEnergyStore = defineStore('energy', () => {
     if (auth.demoMode) {
       loadDemoData()
       status.value = 'success'
+      updatedAt.value = new Date()
       return
     }
     try {
@@ -207,6 +210,7 @@ export const useEnergyStore = defineStore('energy', () => {
       await loadDevices(userId)
       if (auth.user?.id !== userId) return
       status.value = 'success'
+      updatedAt.value = new Date()
     } catch (cause) {
       if (auth.user?.id !== userId) return
       status.value = 'error'
@@ -369,6 +373,7 @@ export const useEnergyStore = defineStore('energy', () => {
     status.value = 'idle'
     error.value = ''
     pendingAction.value = null
+    updatedAt.value = null
   }
 
   return {
@@ -378,6 +383,7 @@ export const useEnergyStore = defineStore('energy', () => {
     status,
     error,
     pendingAction,
+    updatedAt,
     balanceWh,
     reservedWh,
     availableBalanceWh,

@@ -34,23 +34,27 @@ onMounted(() => store.loadAll())
 
 <template>
   <div>
-    <div class="mb-7 flex items-end justify-between">
+    <div class="mb-8 flex items-end justify-between">
       <div>
         <p class="eyebrow">{{ currentDate }}</p>
-        <h1 class="mt-2 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Olá, {{ auth.user?.name }}.</h1>
+        <h1 class="mt-2 text-4xl font-semibold tracking-[-0.055em] sm:text-5xl">Olá, {{ auth.user?.name }}.</h1>
         <p class="mt-2 text-sm text-muted">Sua energia está trabalhando por você.</p>
       </div>
-      <div class="hidden items-center gap-2 rounded-full border border-line bg-white px-3 py-2 text-xs font-semibold text-green sm:flex">
-        <CircleCheck :size="15" /> Dados simulados
+      <div class="hidden items-center gap-2 rounded-full border border-white bg-white/75 px-3.5 py-2 text-xs font-semibold text-green shadow-sm backdrop-blur sm:flex">
+        <span class="relative flex size-2"><span class="absolute inline-flex size-full animate-ping rounded-full bg-green opacity-30"></span><span class="relative inline-flex size-2 rounded-full bg-green"></span></span>
+        <CircleCheck :size="14" /> Dados simulados
       </div>
     </div>
 
-    <div v-if="status === 'loading'" class="panel p-8 text-center text-sm text-muted" role="status">Carregando seu panorama de energia...</div>
+    <div v-if="status === 'loading'" class="grid gap-5 xl:grid-cols-2" role="status" aria-label="Carregando seu panorama de energia">
+      <div class="skeleton h-64 rounded-[28px]"></div>
+      <div class="grid grid-cols-3 gap-4"><div v-for="item in 3" :key="item" class="skeleton h-64 rounded-[22px]"></div></div>
+    </div>
     <div v-else-if="status === 'error'" class="rounded-2xl border border-coral/30 bg-coral/10 p-5 text-sm text-coral" role="alert">
       {{ error }} <button class="ml-2 font-bold underline" @click="store.loadAll(true)">Tentar novamente</button>
     </div>
 
-    <template v-else>
+    <div v-else class="stagger-grid">
       <div class="grid gap-5 xl:grid-cols-[1.05fr_.95fr]">
         <EnergyBalance :balance-wh="availableBalanceWh" :generated-wh="todayGenerationWh" :consumed-wh="todayConsumptionWh" />
         <EnergySummary
@@ -63,21 +67,21 @@ onMounted(() => store.loadAll())
 
       <div class="mt-5 grid gap-5 xl:grid-cols-[1.45fr_.75fr]">
         <EnergyChart :points="weeklyChart" />
-        <section class="panel p-5 sm:p-6">
+        <section class="panel interactive-panel p-5 sm:p-6">
           <p class="eyebrow">Balanço acumulado</p>
           <h2 class="mt-1 text-lg font-semibold">Mercado de energia</h2>
           <div class="mt-8 space-y-6">
             <div>
               <div class="flex justify-between text-xs"><span class="text-muted">Energia comprada</span><strong class="text-green">+ {{ formatEnergy(boughtWh, 1) }}</strong></div>
-              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-line"><div class="h-full rounded-full bg-green" :style="{ width: boughtWidth }"></div></div>
+              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-line"><div class="h-full rounded-full bg-green transition-[width] duration-700 ease-out" :style="{ width: boughtWidth }"></div></div>
             </div>
             <div>
               <div class="flex justify-between text-xs"><span class="text-muted">Energia vendida</span><strong class="text-coral">− {{ formatEnergy(soldWh, 1) }}</strong></div>
-              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-line"><div class="h-full rounded-full bg-coral" :style="{ width: soldWidth }"></div></div>
+              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-line"><div class="h-full rounded-full bg-coral transition-[width] duration-700 ease-out" :style="{ width: soldWidth }"></div></div>
             </div>
           </div>
-          <RouterLink to="/market" class="mt-8 flex items-center justify-between rounded-xl bg-canvas px-4 py-3 text-xs font-semibold transition hover:bg-lime/25">
-            Acessar mercado <ArrowRight :size="15" />
+          <RouterLink to="/market" class="group mt-8 flex items-center justify-between rounded-xl bg-canvas px-4 py-3 text-xs font-semibold transition duration-300 hover:bg-lime/30">
+            Acessar mercado <ArrowRight :size="15" class="transition-transform duration-300 group-hover:translate-x-1" />
           </RouterLink>
         </section>
       </div>
@@ -92,6 +96,6 @@ onMounted(() => store.loadAll())
         </div>
         <TransactionList class="mt-2" :transactions="recentTransactions" />
       </section>
-    </template>
+    </div>
   </div>
 </template>
